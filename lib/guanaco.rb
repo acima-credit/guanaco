@@ -5,6 +5,7 @@ require 'java'
 require 'socket'
 require 'securerandom'
 require 'base64'
+require 'forwardable'
 
 require 'jruby/core_ext'
 require 'jrjackson'
