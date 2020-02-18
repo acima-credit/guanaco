@@ -3,8 +3,8 @@
 module Guanaco
   class Server
     class << self
-      def run(host = nil, port = nil, loop = false)
-        new(host, port, loop).run
+      def run(host = nil, port = nil, loop = false, options = {})
+        new(host, port, loop, options).run
       end
 
       def stage
@@ -15,10 +15,11 @@ module Guanaco
     attr_reader :host, :port
     attr_accessor :loop
 
-    def initialize(host = nil, port = nil, loop = false)
+    def initialize(host = nil, port = nil, loop = false, options = {})
       @host    = host || ENV.fetch('HOST', '0.0.0.0')
       @port    = port || ENV.fetch('PORT', '3000').to_i
       @loop    = loop
+      @options = options
       @started = false
     end
 
@@ -64,7 +65,43 @@ module Guanaco
     end
 
     def base_dir
-      BASE_DIR.find
+      @base_dir ||= base_dir_from_options || found_basedir
+    end
+
+    def base_dir?
+      !base_dir.nil?
+    end
+
+    def props_name
+      options.fetch(:props_name, 'application.properties')
+    end
+
+    def base_path
+      @base_path ||= Pathname.new base_dir.to_s
+    end
+
+    def props_path
+      @props_path ||= base_path.join props_name
+    end
+
+    def props?
+      props_path.file?
+    end
+
+    def public_name
+      options.fetch(:public_name, 'public')
+    end
+
+    def public_path
+      @public_path ||= base_path.join public_name
+    end
+
+    def public?
+      public_path.directory?
+    end
+
+    def index_name
+      options.fetch(:index_name, 'index.html')
     end
 
     private
@@ -72,26 +109,44 @@ module Guanaco
     def build_server
       RP_Server.of do |s|
         s.serverConfig(config)
-
-        s.handlers { |chain| Handlers::Registry.apply_to(chain) }
+        s.handlers do |chain|
+          Handlers::Registry.apply_to(chain)
+          chain.files { |f| f.dir(public_path).indexFiles(index_name) } if public?
+        end
       end
     end
 
     def config
-      RP_ServerConfig.embedded.
-        port(port).
-        address(address).
-        development(development?).
-        base_dir(base_dir).
-        props('application.properties')
+      cfg = RP_ServerConfig.
+            embedded.
+            port(port).
+            address(address).
+            development(development?)
+      if base_dir?
+        cfg = cfg.base_dir(base_dir)
+        cfg = cfg.props(props_name) if props?
+      end
+      cfg
+    end
+
+    def base_dir_from_options
+      return false unless options[:base_dir]
+
+      java.nio.file.FileSystems.get_default.get_path options[:base_dir].to_s
+    end
+
+    def found_basedir
+      BASE_DIR.find
+    rescue Java::JavaLang::IllegalStateException
+      false
     end
   end
 
-  def self.build(host = nil, port = nil, loop = false)
-    Server.new host, port, loop
+  def self.build(host = nil, port = nil, loop = false, options = {})
+    Server.new host, port, loop, options
   end
 
-  def self.run(host = nil, port = nil, loop = false)
-    Server.run host, port, loop
+  def self.run(host = nil, port = nil, loop = false, options = {})
+    Server.run host, port, loop, options
   end
 end
