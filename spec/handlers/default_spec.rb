@@ -4,9 +4,14 @@ require_relative './spec_helper'
 
 RSpec.describe Guanaco::Server::Handlers::Default, :handlers do
   it { expect(described_class).to be_respond_to :handle }
-  it { expect(described_class.new).to be_respond_to :execute }
 
-  let(:exp_hsh) { { status: 'error', message: 'not found' } }
+  let(:exp_hsh) do
+    {
+      status: 'error',
+      message: 'not found',
+      response_status: 404
+    }
+  end
 
   context 'empty GET root request' do
     let(:req_path) { '/' }

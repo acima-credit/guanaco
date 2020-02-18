@@ -5,24 +5,20 @@ module Guanaco
     module Handlers
       class Registry
         class Entry
-          def self.from(type, *args)
-            if args.size == 1
-              new type, nil, args.first
-            else
-              new type, args.first, args.last
-            end
+          def self.build(type, path = nil, handler = nil)
+            new type, path, handler
           end
 
-          attr_reader :type, :url, :handler
+          attr_reader :type, :path, :handler
 
-          def initialize(type, url, handler)
-            @type    = type
-            @url     = url
-            @handler = handler
+          def initialize(type, path = nil, handler = nil)
+            @type = type
+            @path = path
+            @handler = handler || Handlers::Default
           end
 
           def key
-            format '%s : %s', type.to_s.upcase, url || 'none'
+            format '%s : %s', type.to_s.upcase, path || 'none'
           end
 
           def delay?
@@ -30,19 +26,10 @@ module Guanaco
           end
 
           def apply_to(chain)
-            case type
-            when :get
-              chain.get url, handler
-            when :post
-              chain.post url, handler
-            when :put
-              chain.put url, handler
-            when :patch
-              chain.patch url, handler
-            when :delete
-              chain.delete url, handler
-            when :all
-              chain.all handler
+            if path.nil?
+              chain.send type, handler
+            else
+              chain.send type, path, handler
             end
           end
 
@@ -58,34 +45,15 @@ module Guanaco
             @all ||= {}
           end
 
-          def keys
-            all.keys
-          end
-
-          def values
-            all.values
-          end
-
-          def each(&blk)
-            values.each(&blk)
-          end
-
-          def select(&blk)
-            values.select(&blk)
-          end
-
-          def reject(&blk)
-            values.reject(&blk)
-          end
-
-          def add(type, *args)
-            entry          = Entry.from type, *args
+          def add(type, path = nil, handler = nil)
+            entry = Entry.build type, path, handler
             all[entry.key] = entry
           end
 
           def apply_to(chain)
-            reject(&:delay?).each { |entry| entry.apply_to chain }
-            select(&:delay?).each { |entry| entry.apply_to chain }
+            all.values.reject(&:delay?).each { |entry| entry.apply_to chain }
+            all.values.select(&:delay?).each { |entry| entry.apply_to chain }
+            chain
           end
         end
       end

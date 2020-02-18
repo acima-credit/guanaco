@@ -14,4 +14,7 @@ module Guanaco
     INET_ADDRESS = Java::JavaNet::InetAddress # java.net.InetAddress
     BASE_DIR = Java::RatpackServer::BaseDir # ratpack.server.BaseDir
   end
+
+  class Error < StandardError
+  end
 end

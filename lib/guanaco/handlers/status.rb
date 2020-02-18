@@ -4,6 +4,7 @@ module Guanaco
   class Server
     module Handlers
       class Status < Base
+        content_type :json
         handling :get, 'status'
 
         def execute

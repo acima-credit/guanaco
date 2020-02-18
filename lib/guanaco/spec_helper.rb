@@ -15,8 +15,8 @@ module Guanaco
 
     extend RSpec::Core::SharedContext
 
-    let(:json_type) { Guanaco::Server::HTTPResponse::JSON_TYPE }
-    let(:pain_type) { Guanaco::Server::HTTPResponse::PLAIN_TYPE }
+    let(:json_type) { Guanaco::Server::Handlers::Base::JSON_CONTENT_TYPE }
+    let(:plain_type) { Guanaco::Server::Handlers::Base::PLAIN_CONTENT_TYPE }
 
     let(:send_message_stub) { nil }
     let(:send_message_args) { nil }
@@ -41,6 +41,9 @@ module Guanaco
 
     def exp_json_response(hsh = {})
       run_request
+
+      # puts ">> response | #{act_status_code} : #{act_content_type} : " \
+      #      "(#{act_body.to_s.size})\n#{act_body}"
 
       exp_content_type = 'application/json'
       type_msg         = "expected content_type to be [#{exp_content_type}]\n" \
@@ -88,15 +91,7 @@ module Guanaco
         end
         @response = client.request(req_url) do |req_spec|
           req_spec.getBody.text(req_body) if req_body
-          # req_headers&.each { |k, v| req_spec.getHeaders.set k.to_s, v.to_s }
-          req_headers&.each do |k, v|
-            hsh1 = req_spec.getHeaders.getNames.each_with_object({}) { |name, hsh| hsh[name] = req_spec.getHeaders.get name }
-            puts "> hdrs : 0 : #{k.inspect} = #{v.inspect}"
-            puts "> hdrs : 1 : (#{req_spec.getHeaders.class.name}) #{hsh1.inspect}"
-            req_spec.getHeaders.set k.to_s, v.to_s
-            hsh2 = req_spec.getHeaders.getNames.each_with_object({}) { |name, hsh| hsh[name] = req_spec.getHeaders.get name }
-            puts "> hdrs : 2 : (#{req_spec.getHeaders.class.name}) #{hsh2.inspect}"
-          end
+          req_headers&.each { |k, v| req_spec.getHeaders.set k.to_s, v.to_s }
           req_spec.method req_type.to_s.upcase
         end
       end

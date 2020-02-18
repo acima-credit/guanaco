@@ -4,6 +4,8 @@ module Guanaco
   class Server
     module Handlers
       class Default < Base
+        status 404
+        content_type :json
         handling :all
 
         def execute
