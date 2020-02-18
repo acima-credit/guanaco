@@ -7,12 +7,14 @@ module Guanaco
         new(host, port, loop, options).run
       end
 
+      attr_writer :stage
+
       def stage
-        ENV['APP_STAGE'] || ENV['RACK_ENV'] || 'development'
+        @stage || ENV['APP_STAGE'] || ENV['RACK_ENV'] || 'development'
       end
     end
 
-    attr_reader :host, :port, :options, :config, :stage
+    attr_reader :host, :port, :options, :config
     attr_accessor :loop
 
     def initialize(host = nil, port = nil, loop = false, options = {})
@@ -20,13 +22,16 @@ module Guanaco
       @port = port || ENV.fetch('PORT', '3000').to_i
       @loop = loop
       @options = options
-      @stage = options.fetch :stage, self.class.stage
       @config = Config.new self, options
       @started = false
     end
 
     def server
       @server ||= config.build_server
+    end
+
+    def stage
+      self.class.stage
     end
 
     def banner
