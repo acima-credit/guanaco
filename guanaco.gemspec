@@ -31,8 +31,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rubocop'
   s.add_development_dependency 'ruby-maven'
 
-  s.requirements << 'jar org.slf4j, slf4j-api, 1.7.10'
-  s.requirements << 'jar org.slf4j, slf4j-simple, 1.7.10'
-  s.requirements << 'jar io.ratpack, ratpack-core, 1.7.5'
-  s.requirements << 'jar io.ratpack, ratpack-test, 1.7.5'
+  s.requirements << 'jar org.slf4j, slf4j-api, 1.7.30'
+  s.requirements << 'jar org.slf4j, slf4j-simple, 1.7.30'
+  s.requirements << 'jar io.ratpack, ratpack-core, 1.7.6'
+  s.requirements << 'jar io.ratpack, ratpack-test, 1.7.6'
 end
