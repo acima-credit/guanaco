@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'jars/installer'
-require 'pathname'
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
 require 'pathname'

@@ -26,15 +26,21 @@ module Guanaco
       @server ||= build_server
     end
 
+    def banner
+      puts ">> starting at #{@host}:#{@port} ..."
+      puts ">> and stage = #{self.class.stage} ..."
+    end
+
     def run
       return if @started
 
-      puts ">> starting at #{@host}:#{@port} ..."
-      puts ">> and stage = #{self.class.stage} ..."
+      banner
       server.start
       @started = true
 
       at_exit { shutdown }
+      Signal.trap('INT') { shutdown }
+      Signal.trap('TERM') { shutdown }
 
       sleep 0.5 while loop
 
