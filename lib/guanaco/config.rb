@@ -2,11 +2,7 @@
 
 module Guanaco
   class Server
-    class Options
-      def self.build(server, options)
-        new(server, options).build
-      end
-
+    class Config
       attr_reader :server, :options
 
       def initialize(server, options)

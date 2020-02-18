@@ -20,7 +20,7 @@ module Guanaco
       @port = port || ENV.fetch('PORT', '3000').to_i
       @loop = loop
       @options = options
-      @config = Config.build options
+      @config = Config.new self, options
       @started = false
     end
 
