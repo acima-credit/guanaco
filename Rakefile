@@ -4,8 +4,11 @@ require 'jars/installer'
 require 'pathname'
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
+require 'pathname'
 
 RAKE_ROOT = Pathname.new('.').dirname.expand_path
+
+Bundler::GemHelper.install_tasks
 
 desc 'Vendor jars'
 task :vendor_jars do
@@ -21,10 +24,6 @@ begin
       '--color',
       '--format doc'
     ]
-    if ENV['JUNIT'] == 'true'
-      task.rspec_opts << '--format RspecJunitFormatter'
-      task.rspec_opts << "--out #{test_dir}/coverage/rspec.xml"
-    end
     task.rspec_opts << '--tag ~skip_ci' if ENV['CI'] == 'true'
     task.verbose = false
   end

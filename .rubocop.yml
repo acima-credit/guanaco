@@ -34,6 +34,7 @@ Metrics/MethodLength:
 Metrics/BlockLength:
   Exclude:
     - spec/**/*.rb
+    - guanaco.gemspec
 
 Metrics/ModuleLength:
   CountComments: false
