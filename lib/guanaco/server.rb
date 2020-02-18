@@ -61,6 +61,7 @@ module Guanaco
       server.stop
       @server  = nil
       @started = false
+      exit if loop
     end
 
     def development?
