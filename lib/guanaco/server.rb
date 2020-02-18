@@ -12,7 +12,7 @@ module Guanaco
       end
     end
 
-    attr_reader :host, :port, :options, :config
+    attr_reader :host, :port, :options, :config, :stage
     attr_accessor :loop
 
     def initialize(host = nil, port = nil, loop = false, options = {})
@@ -20,6 +20,7 @@ module Guanaco
       @port = port || ENV.fetch('PORT', '3000').to_i
       @loop = loop
       @options = options
+      @stage = options.fetch :stage, self.class.stage
       @config = Config.new self, options
       @started = false
     end
@@ -30,7 +31,7 @@ module Guanaco
 
     def banner
       puts ">> starting at #{@host}:#{@port} ..."
-      puts ">> and stage = #{self.class.stage} ..."
+      puts ">> and stage = #{stage} ..."
     end
 
     def run
