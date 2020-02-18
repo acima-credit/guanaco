@@ -4,6 +4,7 @@ require 'jars/installer'
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
 require 'pathname'
+require 'fileutils'
 
 RAKE_ROOT = Pathname.new('.').dirname.expand_path
 
@@ -11,7 +12,13 @@ Bundler::GemHelper.install_tasks
 
 desc 'Vendor jars'
 task :vendor_jars do
+  puts ' [ Remove Jars ] '.center(120, '=')
+  FileUtils.rm_rf RAKE_ROOT.join('lib', 'jars')
+  puts ' [ Update Jars ] '.center(120, '=')
   Jars::Installer.vendor_jars! 'lib/jars'
+  puts ' [ Run Rubocop ] '.center(120, '=')
+  Rake::Task['another:task'].invoke
+  puts ' [ Done! ] '.center(120, '=')
 end
 
 begin
