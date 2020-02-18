@@ -22,4 +22,5 @@ require_relative 'guanaco/handlers/base'
 require_relative 'guanaco/handlers/default'
 require_relative 'guanaco/handlers/status'
 
+require_relative 'guanaco/config'
 require_relative 'guanaco/server'

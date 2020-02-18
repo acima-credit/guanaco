@@ -12,19 +12,20 @@ module Guanaco
       end
     end
 
-    attr_reader :host, :port
+    attr_reader :host, :port, :options, :config
     attr_accessor :loop
 
     def initialize(host = nil, port = nil, loop = false, options = {})
-      @host    = host || ENV.fetch('HOST', '0.0.0.0')
-      @port    = port || ENV.fetch('PORT', '3000').to_i
-      @loop    = loop
+      @host = host || ENV.fetch('HOST', '0.0.0.0')
+      @port = port || ENV.fetch('PORT', '3000').to_i
+      @loop = loop
       @options = options
+      @config = Config.build options
       @started = false
     end
 
     def server
-      @server ||= build_server
+      @server ||= config.build_server
     end
 
     def banner
@@ -62,83 +63,6 @@ module Guanaco
 
     def address
       INET_ADDRESS.getByName(@host)
-    end
-
-    def base_dir
-      @base_dir ||= base_dir_from_options || found_basedir
-    end
-
-    def base_dir?
-      !base_dir.nil?
-    end
-
-    def props_name
-      options.fetch(:props_name, 'application.properties')
-    end
-
-    def base_path
-      @base_path ||= Pathname.new base_dir.to_s
-    end
-
-    def props_path
-      @props_path ||= base_path.join props_name
-    end
-
-    def props?
-      props_path.file?
-    end
-
-    def public_name
-      options.fetch(:public_name, 'public')
-    end
-
-    def public_path
-      @public_path ||= base_path.join public_name
-    end
-
-    def public?
-      public_path.directory?
-    end
-
-    def index_name
-      options.fetch(:index_name, 'index.html')
-    end
-
-    private
-
-    def build_server
-      RP_Server.of do |s|
-        s.serverConfig(config)
-        s.handlers do |chain|
-          Handlers::Registry.apply_to(chain)
-          chain.files { |f| f.dir(public_path).indexFiles(index_name) } if public?
-        end
-      end
-    end
-
-    def config
-      cfg = RP_ServerConfig.
-            embedded.
-            port(port).
-            address(address).
-            development(development?)
-      if base_dir?
-        cfg = cfg.base_dir(base_dir)
-        cfg = cfg.props(props_name) if props?
-      end
-      cfg
-    end
-
-    def base_dir_from_options
-      return false unless options[:base_dir]
-
-      java.nio.file.FileSystems.get_default.get_path options[:base_dir].to_s
-    end
-
-    def found_basedir
-      BASE_DIR.find
-    rescue Java::JavaLang::IllegalStateException
-      false
     end
   end
 
