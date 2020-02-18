@@ -46,6 +46,11 @@ module Guanaco
           @finalized        = false
         end
 
+        extend Forwardable
+        def_delegators :@request, :body, :cookies, :path, :protocol, :query, :query_params
+        def_delegators :@request, :raw_uri, :uri, :is_ajax_request, :is_chunked_transfer, :one_cookie
+        def_delegators :@request, :headers, :params, :content_type
+
         # rubocop:disable Lint/RescueException
         def handle
           before_request

@@ -17,15 +17,6 @@ module Guanaco
         @body
       end
 
-      # delegate :content_length, :content_type, :cookies,
-      #          :path, :protocol, :query, :query_params, :raw_uri, :uri,
-      #          :is_ajax_request, :is_chunked_transfer, :one_cookie,
-      #          to: :request
-
-      # alias is_ajax? is_ajax_request
-      # alias is_chunked? is_chunked_transfer
-      # alias cookie one_cookie
-
       def method_name
         @method_name ||= @request.get_method.get_name.downcase
       end
