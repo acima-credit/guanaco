@@ -33,6 +33,14 @@ module Guanaco
             parent = ancestors[1..-1].find { |x| x.respond_to?(:content_type) && !x.content_type.nil? }
             parent&.content_type
           end
+
+          def blocking(value = :no_value)
+            @blocking = value unless value == :no_value
+            return @blocking if instance_variable_defined?(:@blocking)
+
+            parent = ancestors[1..-1].find { |x| x.respond_to?(:blocking) && !x.blocking.nil? }
+            parent&.blocking || false
+          end
         end
 
         attr_reader :context, :request, :response_headers
@@ -53,10 +61,11 @@ module Guanaco
 
         # rubocop:disable Lint/RescueException
         def handle
-          before_request
-          result = execute
-          after_request result
-          result
+          if self.class.blocking
+            RP_Blocking.get { run_request }
+          else
+            run_request
+          end
         rescue ::Exception => e
           render_exception e
         end
@@ -135,12 +144,11 @@ module Guanaco
 
         private
 
-        def method_missing(method, *args, &block)
-          @context.send(method, *args, &block)
-        end
-
-        def respond_to_missing?(method_name, include_private = false)
-          @context.respond_to? method_name, include_private
+        def run_request
+          before_request
+          result = execute
+          after_request result
+          result
         end
 
         def get_response(code)
