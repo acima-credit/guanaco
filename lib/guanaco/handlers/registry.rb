@@ -18,7 +18,7 @@ module Guanaco
           end
 
           def key
-            format '%s : %s', type.to_s.upcase, path || 'none'
+            format '%s : %s', path || 'none', type.to_s.upcase
           end
 
           def delay?

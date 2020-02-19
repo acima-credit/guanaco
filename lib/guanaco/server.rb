@@ -12,6 +12,10 @@ module Guanaco
       def stage
         @stage || ENV['APP_STAGE'] || ENV['RACK_ENV'] || 'development'
       end
+
+      def development?
+        stage == 'development'
+      end
     end
 
     attr_reader :host, :port, :options, :config
@@ -65,7 +69,7 @@ module Guanaco
     end
 
     def development?
-      self.class.stage == 'development'
+      self.class.development?
     end
 
     def address

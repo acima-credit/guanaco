@@ -55,25 +55,16 @@ module Guanaco
         end
 
         extend Forwardable
-        def_delegators :@request, :body, :cookies, :path, :protocol, :query, :query_params
-        def_delegators :@request, :raw_uri, :uri, :is_ajax_request, :is_chunked_transfer, :one_cookie
-        def_delegators :@request, :headers, :params, :content_type
+        def_delegators :@request, :body, :cookies, :path, :protocol, :query, :query_params, :raw_uri, :uri
+        def_delegators :@request, :is_ajax_request, :headers, :params, :content_type
 
-        # rubocop:disable Lint/RescueException
         def handle
-          if self.class.blocking
-            RP_Blocking.get { run_request }
-          else
-            run_request
-          end
+          run_request
         rescue ::Exception => e
           render_exception e
         end
-        # rubocop:enable Lint/RescueException
 
-        def before_request
-          # nothing here yet
-        end
+        def before_request; end
 
         def execute
           {}
@@ -100,7 +91,7 @@ module Guanaco
             message: 'There was an error processing your request',
             response_status: 500
           }
-          # return hsh unless instance.development?
+          return hsh unless Server.development?
 
           hsh[:message] += ": #{e.message}"
           hsh[:class]     = e.class
@@ -111,10 +102,8 @@ module Guanaco
 
         def render(options = {})
           response = get_response options[:status] || response_status
-
           update_headers response, options
           render_body response, options[:body] || ''
-
           @finalized = true
         end
 
@@ -146,8 +135,19 @@ module Guanaco
 
         def run_request
           before_request
-          result = execute
-          after_request result
+
+          result = if self.class.blocking
+                     RP_Blocking.get { execute }
+                   else
+                     execute
+                   end
+
+          if result.is_a?(RP_Promise)
+            result.then { |value| after_request value }
+          else
+            after_request result
+          end
+
           result
         end
 

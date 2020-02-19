@@ -31,30 +31,15 @@ RSpec.describe Guanaco::ExampleHandler, :handlers do
   let(:req_params) { { a: 1 } }
 
   context 'mappings' do
-    it { expect(Guanaco.handlers_registry.all.keys).to include 'DELETE : example/delete' }
-    it { expect(Guanaco.handlers_registry.all.keys).to include 'GET : example/get' }
-    it { expect(Guanaco.handlers_registry.all.keys).to include 'PATCH : example/patch' }
-    it { expect(Guanaco.handlers_registry.all.keys).to include 'POST : example/post' }
-    it { expect(Guanaco.handlers_registry.all.keys).to include 'PUT : example/put' }
-  end
-
-  context 'registry keys' do
-    let(:keys) do
-      [
-        'ALL : none',
-        'DELETE : example/delete',
-        'GET : example/get',
-        'GET : example/get_name/:name',
-        'GET : example/get_rx/:rx?:\\d+',
-        'GET : example/get_token/:token?',
-        'GET : status',
-        'PATCH : example/patch',
-        'PATH : example/path',
-        'POST : example/post',
-        'PUT : example/put'
-      ]
-    end
-    it { expect(Guanaco.handlers_registry.all.keys.sort).to eq keys }
+    it { expect(Guanaco.handlers_registry.all.keys).to include 'example/delete : DELETE' }
+    it { expect(Guanaco.handlers_registry.all.keys).to include 'example/get : GET' }
+    it { expect(Guanaco.handlers_registry.all.keys).to include 'example/get_name/:name : GET' }
+    it { expect(Guanaco.handlers_registry.all.keys).to include 'example/get_rx/:rx?:\\d+ : GET' }
+    it { expect(Guanaco.handlers_registry.all.keys).to include 'example/get_token/:token? : GET' }
+    it { expect(Guanaco.handlers_registry.all.keys).to include 'example/patch : PATCH' }
+    it { expect(Guanaco.handlers_registry.all.keys).to include 'example/path : PATH' }
+    it { expect(Guanaco.handlers_registry.all.keys).to include 'example/post : POST' }
+    it { expect(Guanaco.handlers_registry.all.keys).to include 'example/put : PUT' }
   end
 
   let(:req_path) { "/example/#{req_type}" }
@@ -88,19 +73,19 @@ RSpec.describe Guanaco::ExampleHandler, :handlers do
     it('works') { exp_json_response method: 'get', content_type: json_type, params: { a: '1', name: 'john' } }
   end
 
-  context 'GET example rx optional missing request', :focus do
+  context 'GET example rx optional missing request' do
     let(:req_type) { :get }
     let(:req_path) { '/example/get_rx/' }
     it('works') { exp_json_response method: 'get', content_type: json_type, params: { a: '1' } }
   end
 
-  context 'GET example rx optional valid request', :focus do
+  context 'GET example rx optional valid request' do
     let(:req_type) { :get }
     let(:req_path) { '/example/get_rx/10' }
     it('works') { exp_json_response method: 'get', content_type: json_type, params: { a: '1', rx: '10' } }
   end
 
-  context 'GET example rx optional invalid request', :focus do
+  context 'GET example rx optional invalid request' do
     let(:req_type) { :get }
     let(:req_path) { '/example/get_rx/other' }
     it('works') { exp_json_response status: 'error', message: 'not found', response_status: 404 }

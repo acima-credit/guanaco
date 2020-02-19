@@ -42,8 +42,7 @@ module Guanaco
     def exp_json_response(hsh = {})
       run_request
 
-      # puts ">> response | #{act_status_code} : #{act_content_type} : " \
-      #      "(#{act_body.to_s.size})\n#{act_body}"
+      puts ">> response | #{act_status_code} : #{act_content_type} : (#{act_body.to_s.size})\n#{act_body}" if ENV['DEBUG'] == 'true'
 
       exp_content_type = 'application/json'
       type_msg         = "expected content_type to be [#{exp_content_type}]\n" \
