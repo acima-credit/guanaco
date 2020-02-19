@@ -18,7 +18,8 @@ module Guanaco
       {
         method: request.method_name,
         content_type: request.content_type,
-        params: request.params
+        params: request.params,
+        body: body
       }
     end
   end
@@ -46,86 +47,162 @@ RSpec.describe Guanaco::ExampleHandler, :handlers do
 
   context 'GET example request' do
     let(:req_type) { :get }
-    it('works') { exp_json_response method: 'get', content_type: json_type, params: { a: '1' } }
+    it('works') do
+      exp_json_response method: 'get',
+                        content_type: json_type,
+                        params: { a: '1' },
+                        body: ''
+    end
   end
 
   context 'GET example token optional missing request' do
     let(:req_type) { :get }
     let(:req_path) { '/example/get_token/' }
-    it('works') { exp_json_response method: 'get', content_type: json_type, params: { a: '1', token: '' } }
+    it('works') do
+      exp_json_response method: 'get',
+                        content_type: json_type,
+                        params: { a: '1', token: '' },
+                        body: ''
+    end
   end
 
   context 'GET example token optional present request' do
     let(:req_type) { :get }
     let(:req_path) { '/example/get_token/tk' }
-    it('works') { exp_json_response method: 'get', content_type: json_type, params: { a: '1', token: 'tk' } }
+    it('works') do
+      exp_json_response method: 'get',
+                        content_type: json_type,
+                        params: { a: '1', token: 'tk' },
+                        body: ''
+    end
   end
 
   context 'GET example name optional missing request' do
     let(:req_type) { :get }
     let(:req_path) { '/example/get_name/' }
-    it('works') { exp_json_response status: 'error', message: 'not found', response_status: 404 }
+    it('works') do
+      exp_json_response status: 'error',
+                        message: 'not found',
+                        response_status: 404
+    end
   end
 
   context 'GET example name optional present request' do
     let(:req_type) { :get }
     let(:req_path) { '/example/get_name/john' }
-    it('works') { exp_json_response method: 'get', content_type: json_type, params: { a: '1', name: 'john' } }
+    it('works') do
+      exp_json_response method: 'get',
+                        content_type: json_type,
+                        params: { a: '1', name: 'john' },
+                        body: ''
+    end
   end
 
   context 'GET example rx optional missing request' do
     let(:req_type) { :get }
     let(:req_path) { '/example/get_rx/' }
-    it('works') { exp_json_response method: 'get', content_type: json_type, params: { a: '1' } }
+    it('works') do
+      exp_json_response method: 'get',
+                        content_type: json_type,
+                        params: { a: '1' },
+                        body: ''
+    end
   end
 
   context 'GET example rx optional valid request' do
     let(:req_type) { :get }
     let(:req_path) { '/example/get_rx/10' }
-    it('works') { exp_json_response method: 'get', content_type: json_type, params: { a: '1', rx: '10' } }
+    it('works') do
+      exp_json_response method: 'get',
+                        content_type: json_type,
+                        params: { a: '1', rx: '10' },
+                        body: ''
+    end
   end
 
   context 'GET example rx optional invalid request' do
     let(:req_type) { :get }
     let(:req_path) { '/example/get_rx/other' }
-    it('works') { exp_json_response status: 'error', message: 'not found', response_status: 404 }
+    it('works') do
+      exp_json_response status: 'error',
+                        message: 'not found',
+                        response_status: 404
+    end
   end
 
   context 'POST example request' do
     let(:req_type) { :post }
-    it('works') { exp_json_response method: 'post', content_type: json_type, params: { a: '1' } }
+    let(:req_body) { '{"b":2}' }
+    it('works') do
+      exp_json_response method: 'post',
+                        content_type: json_type,
+                        params: { a: '1' },
+                        body: '{"b":2}'
+    end
   end
 
   context 'PUT example request' do
     let(:req_type) { :put }
-    it('works') { exp_json_response method: 'put', content_type: json_type, params: { a: '1' } }
+    let(:req_body) { '{"b":2}' }
+    it('works') do
+      exp_json_response method: 'put',
+                        content_type: json_type,
+                        params: { a: '1' },
+                        body: '{"b":2}'
+    end
   end
 
   context 'PATCH example request' do
     let(:req_type) { :patch }
-    it('works') { exp_json_response method: 'patch', content_type: json_type, params: { a: '1' } }
+    let(:req_body) { '{"b":2}' }
+    it('works') do
+      exp_json_response method: 'patch',
+                        content_type: json_type,
+                        params: { a: '1' },
+                        body: '{"b":2}'
+    end
   end
 
   context 'DELETE example request' do
     let(:req_type) { :delete }
-    it('works') { exp_json_response method: 'delete', content_type: json_type, params: { a: '1' } }
+    it('works') do
+      exp_json_response method: 'delete',
+                        content_type: json_type,
+                        params: { a: '1' },
+                        body: ''
+    end
   end
 
   context 'GET example path request' do
     let(:req_type) { :get }
     let(:req_path) { '/example/path' }
-    it('works') { exp_json_response method: 'get', content_type: json_type, params: { a: '1' } }
+    it('works') do
+      exp_json_response method: 'get',
+                        content_type: json_type,
+                        params: { a: '1' },
+                        body: ''
+    end
   end
 
   context 'POST example path request' do
     let(:req_type) { :post }
     let(:req_path) { '/example/path' }
-    it('works') { exp_json_response method: 'post', content_type: json_type, params: { a: '1' } }
+    it('works') do
+      exp_json_response method: 'post',
+                        content_type: json_type,
+                        params: { a: '1' },
+                        body: ''
+    end
   end
 
   context 'DELETE example path request' do
     let(:req_type) { :delete }
     let(:req_path) { '/example/path' }
-    it('works') { exp_json_response method: 'delete', content_type: json_type, params: { a: '1' } }
+    it('works') do
+      exp_json_response method: 'delete',
+                        content_type: json_type,
+                        params: { a: '1' },
+                        body: ''
+    end
   end
 end

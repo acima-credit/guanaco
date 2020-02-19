@@ -15,7 +15,7 @@ module Guanaco
           end
 
           def handle(context)
-            new(context).handle
+            context.get_request.get_body.then { |body| new(context, body.get_text).handle }
           end
 
           def status(value = :no_value)
@@ -46,9 +46,9 @@ module Guanaco
         attr_reader :context, :request, :response_headers
         attr_accessor :response_status
 
-        def initialize(context = nil)
+        def initialize(context = nil, body = nil)
           @context          = ContextProxy.new context
-          @request          = RequestProxy.new context
+          @request          = RequestProxy.new context, body
           @response_status  = self.class.status
           @response_headers = {}
           @finalized        = false

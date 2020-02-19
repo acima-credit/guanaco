@@ -5,7 +5,7 @@ RSpec.describe Guanaco do
     expect(Guanaco::VERSION).not_to be nil
   end
 
-  context 'registry keys', :focus do
+  context 'registry keys' do
     let(:keys) do
       [
         'blocking_example/:ms?:\\d+ : GET',

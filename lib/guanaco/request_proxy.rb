@@ -3,19 +3,13 @@
 module Guanaco
   class Server
     class RequestProxy
-      def initialize(context)
+      def initialize(context, body)
         @context = context
         @request = context.get_request
-        @body = :uninitialized
+        @body = body
       end
 
-      def body
-        return @body unless @body == :uninitialized
-
-        @body = @request.get_body.then { |str| @body = str }
-        sleep 0.01 while @body == :uninitialized
-        @body
-      end
+      attr_reader :body
 
       def method_name
         @method_name ||= @request.get_method.get_name.downcase
@@ -79,7 +73,7 @@ module Guanaco
 
       def build_headers
         @request.get_headers.get_names.each_with_object({}) do |name, hsh|
-          hsh[name] = @context.get_request.get_headers.get name
+          hsh[name] = @request.get_headers.get name
         end
       end
 
