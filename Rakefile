@@ -12,14 +12,9 @@ Bundler::GemHelper.install_tasks
 
 desc 'Vendor jars'
 task :vendor_jars do
-  puts ' [ Vendor Jars ] '.center(120, '=')
-  puts ' [ Remove ] '.center(120, '-')
-  FileUtils.rm_rf RAKE_ROOT.join('lib', 'jars')
-  puts ' [ Update ] '.center(120, '-')
-  Jars::Installer.vendor_jars! 'lib/jars'
-  puts ' [ Rubocop ] '.center(120, '-')
+  FileUtils.rm_rf RAKE_ROOT.join('lib', 'messy', 'broker', 'jars')
+  Jars::Installer.vendor_jars! 'lib/guanaco/jars'
   Rake::Task['rubocop:auto_correct'].invoke
-  puts ' [ Done! ] '.center(120, '=')
 end
 
 begin

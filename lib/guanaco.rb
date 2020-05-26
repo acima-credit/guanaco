@@ -10,7 +10,7 @@ require 'forwardable'
 require 'jruby/core_ext'
 require 'jrjackson'
 
-require_relative 'jars/guanaco_jars'
+require_relative 'guanaco/jars/guanaco_jars'
 
 require_relative 'guanaco/version'
 require_relative 'guanaco/constants'
